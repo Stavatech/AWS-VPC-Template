@@ -7,10 +7,7 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: true
       CidrBlock: {{ cidr_block }}
-
-  # Setup networking resources for the public subnets. Containers
-  # in the public subnets have public IP addresses and the routing table
-  # sends network traffic via the internet gateway.
+  
   InternetGateway:
     Type: AWS::EC2::InternetGateway
 
@@ -19,7 +16,7 @@ Resources:
     Properties:
       VpcId: !Ref 'VPC'
       InternetGatewayId: !Ref 'InternetGateway'
-
+    
   {% if has_private_route %}
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
@@ -43,7 +40,6 @@ Resources:
   {% endif %}
 
   {% for subnet in subnets  %}
-
   {{ subnet['name'] }}:
     Type: AWS::EC2::Subnet
     Properties:
@@ -54,22 +50,19 @@ Resources:
       VpcId: !Ref 'VPC'
       CidrBlock: {{ subnet['cidr_block'] }}
       MapPublicIpOnLaunch: {{ subnet['is_public'] }}
-
+  
   {% if subnet['is_public'] %}
-
   {{ subnet['name'] }}RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref {{ subnet['name'] }}
       RouteTableId: !Ref PublicRouteTable
-
   {% else %}
-
   {{ subnet['name'] }}RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref {{ subnet['name'] }}
-      RouteTableId: !Ref PrivateRouteTable
-  
+      RouteTableId: !Ref PrivateRouteTable  
   {% endif %}
+  
   {% endfor %}
