@@ -44,7 +44,7 @@ Resources:
 
   {% for subnet in subnets  %}
 
-  {{ subnet['subnet_name'] }}:
+  {{ subnet['name'] }}:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone:
@@ -57,18 +57,18 @@ Resources:
 
   {% if subnet['is_public'] %}
 
-  {{ subnet['subnet_name'] }}RouteTableAssociation:
+  {{ subnet['name'] }}RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref {{ subnet['subnet_name'] }}
+      SubnetId: !Ref {{ subnet['name'] }}
       RouteTableId: !Ref PublicRouteTable
 
   {% else %}
 
-  {{ subnet['subnet_name'] }}RouteTableAssociation:
+  {{ subnet['name'] }}RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref {{ subnet['subnet_name'] }}
+      SubnetId: !Ref {{ subnet['name'] }}
       RouteTableId: !Ref PrivateRouteTable
   
   {% endif %}
